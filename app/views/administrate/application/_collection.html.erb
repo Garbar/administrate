@@ -49,7 +49,8 @@ to display a collection of resources in an HTML table.
       <% [valid_action?(:edit, collection_presenter.resource_name),
           valid_action?(:destroy, collection_presenter.resource_name)].count(true).times do %>
         <th scope="col"></th>
-      <% end %>
+      <%- end -%>
+      <th colspan="<%= collection_presenter.model_translates? ? 3 : 2 %>" scope="col"></th>
     </tr>
   </thead>
 
@@ -72,6 +73,13 @@ to display a collection of resources in an HTML table.
             <% end -%>
           </td>
         <% end %>
+        <%- if collection_presenter.model_translates? -%>
+        <td>
+          <%- collection_presenter.with_other_locales(resource) do |other_locale, resource| -%>
+          <%= link_to ":#{other_locale}", [namespace, resource, other_locale] %>
+          <%- end -%>
+        </td>
+        <%- end -%>
 
         <% if valid_action? :edit, collection_presenter.resource_name %>
           <td><%= link_to(

@@ -11,13 +11,22 @@ module Administrate
 
     def run
       if @term.blank?
-        @scoped_resource.all
+        dashboard_model.all
       else
-        @scoped_resource.where(query, *search_terms)
+        dashboard_model.where(query, *search_terms)
       end
     end
 
     private
+
+    def dashboard_model
+      if @scoped_resource.respond_to?(:translates?) &&
+         @scoped_resource.translates?
+        @scoped_resource.with_translations(I18n.locale)
+      else
+        @scoped_resource
+      end
+    end
 
     def query
       search_attributes.map do |attr|
